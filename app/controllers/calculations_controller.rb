@@ -1,6 +1,6 @@
 class CalculationsController < ApplicationController
 
-  before_filter :set_calculation, except: [:index, :new, :create]
+  before_action :set_calculation, except: [:index, :new, :create]
 
   def index
   end
