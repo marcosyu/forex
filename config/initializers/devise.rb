@@ -298,6 +298,7 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'], {
+    # config.omniauth :google_oauth2, '194077244922-g6gh3nl1md2egf14q1ta8rfakeqssrek.apps.googleusercontent.com', 'Mito4eGGL7J0qxLsuUqY0Ryx',{
     scope: "contacts.readonly,userinfo.email"
   }
 end
