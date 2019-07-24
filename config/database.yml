@@ -1,0 +1,24 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  
+
+development:
+  <<: *default
+  database: forexdb
+  username: forexusr
+  password: forexpass
+
+test:
+  <<: *default
+  database: forexdb_test
+  username: forexusr
+  password: forexpass
+
+production:
+  <<: *default
+  database: geo_app_production
+  username: geo_app
+  password: <%= ENV['GEO_APP_DATABASE_PASSWORD'] %>
