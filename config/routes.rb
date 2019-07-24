@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   end
 
   authenticated do
-    root :to => 'admin#index'
+    root :to => 'calculations#index'
   end
 
 
