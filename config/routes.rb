@@ -7,13 +7,8 @@ Rails.application.routes.draw do
     resources :calculations
   end
 
-  unauthenticated do
-    root to: 'home#index'
-  end
+  root :to => 'home#index'
 
-  authenticated do
-    root :to => 'calculations#index'
-  end
 
 
 end
