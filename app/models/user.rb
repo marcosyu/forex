@@ -4,7 +4,7 @@ class User < ApplicationRecord
 
   has_many :calculations, dependent: :destroy
 
-  validates :username, :provider, :uid, presence: true
+  validates :email, :provider, :uid, presence: true
 
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
