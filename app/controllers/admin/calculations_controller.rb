@@ -1,4 +1,4 @@
-class CalculationsController < ApplicationController
+class Admin::CalculationsController < AdminController
 
   before_action :set_calculation, except: [:index, :new, :create]
 
