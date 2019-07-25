@@ -44,22 +44,9 @@ module Admin::ExchangeRatesHelper
 
 
   def chart_data
-    color_list= []
-    min_val =  data.min_by{|h,v| v[target_rate]}[1][target_rate]
-    max_val = data.max_by{|h,v| v[target_rate]}[1][target_rate]
+
     chart_data = []
-    colors = {}
-    colors[min_val] = 'red'
-    colors[max_val] = 'green'
-
-
     @exchange_rate.historical_duration.each do |k|
-      if colors[k[1].values[0]].nil?
-        color_list << 'blue'
-      else
-        color_list << colors[k[1].values[0]]
-      end
-
       chart_data << [ k[0], k[1].values[0] ]
     end
 
