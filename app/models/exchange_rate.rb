@@ -6,6 +6,6 @@ class ExchangeRate < ApplicationRecord
   after_save :pull_history
 
   def pull_history
-    ExchangeRateServices.new(self.id).get_histories
+    ExchangeRateJob.perform_later(self.id)
   end
 end
