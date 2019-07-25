@@ -44,6 +44,8 @@ class Admin::ExchangeRatesController < AdminController
   def update
     respond_to do |format|
       if @exchange_rate.update(exchange_rate_params)
+        Resque.enqueue(ExchangeRateJob, @exchange_rate.id)
+
         format.html { redirect_to [:admin, @exchange_rate], notice: 'Exchange rate was successfully updated.' }
         format.json { render :show, status: :ok, location: @exchange_rate }
       else

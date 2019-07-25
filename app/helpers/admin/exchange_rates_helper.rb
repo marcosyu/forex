@@ -5,23 +5,25 @@ module Admin::ExchangeRatesHelper
   end
 
   def convert_to(date)
-    @exchange_rate.amount / get_rate(date)
+    @exchange_rate.amount.to_f / data[date][target_rate]
   end
 
   def compute_profit(date)
     i = data.keys.index(date)
-    return 0 if i == 0
+    return '--' if i == 0
     profit = convert_to(data.keys[i-1]) - convert_to(date)
     if profit > 0
-      content_tag(:span, profit, class: 'text-success')
+      content_tag(:span, profit.round(2), class: 'text-success text-center')
+    elsif profit == 0
+      content_tag(:span, profit.round(2), class: 'text-center')
     else
-      content_tag(:span, profit, class: 'text-danger')
+      content_tag(:span, profit.round(2), class: 'text-danger text-center')
     end
   end
 
   def highest_lowest_value(date)
-    max = data.values[0..data.keys.index(date)].max_by{|h,v| h.values }[target_rate]
-    low = data.values[0..data.keys.index(date)].min_by{|h,v| h.values }[target_rate]
+    max = data.values.max_by{|h,v| h.values }[target_rate]
+    low = data.values.min_by{|h,v| h.values }[target_rate]
 
     min_max = content_tag(:span, max, class: 'text-success')
     min_max += " | "
@@ -50,7 +52,7 @@ module Admin::ExchangeRatesHelper
       chart_data << [ k[0], k[1].values[0] ]
     end
 
-    return column_chart chart_data, colors: color_list
+    return line_chart chart_data, colors: color_list
 
   end
 
