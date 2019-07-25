@@ -5,9 +5,7 @@ module Admin::ExchangeRatesHelper
     max = data.values.max_by{|h,v| h.values }[target_rate]
     low = data.values.min_by{|h,v| h.values }[target_rate]
 
-    byebug if cur_value == max
     if max == cur_value
-      byebug
       content_tag(:span, cur_value, class: 'text-success')
     elsif low == cur_value
       content_tag(:span, cur_value, class: 'text-danger')
