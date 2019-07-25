@@ -50,7 +50,7 @@ module Admin::ExchangeRatesHelper
       chart_data << [ k[0], k[1].values[0] ]
     end
 
-    return line_chart chart_data, colors: color_list
+    return line_chart chart_data
 
   end
 
