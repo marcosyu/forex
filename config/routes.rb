@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    resources :calculations
     resources :exchange_rates
   end
 
