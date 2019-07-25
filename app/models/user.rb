@@ -2,7 +2,7 @@ class User < ApplicationRecord
 
   devise :omniauthable, omniauth_providers: [:google_oauth2]
 
-  has_many :calculations, dependent: :destroy
+  has_many :exchange_rates, dependent: :destroy
 
   validates :email, :provider, :uid, presence: true
 

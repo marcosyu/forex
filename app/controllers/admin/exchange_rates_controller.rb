@@ -24,7 +24,7 @@ class Admin::ExchangeRatesController < AdminController
   # POST /admin/exchange_rates
   # POST /admin/exchange_rates.json
   def create
-    @exchange_rate = ExchangeRate.new(exchange_rate_params)
+    @exchange_rate = current_user.exchange_rates.new(exchange_rate_params)
 
     respond_to do |format|
       if @exchange_rate.save
@@ -66,7 +66,7 @@ class Admin::ExchangeRatesController < AdminController
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_admin_exchange_rate
-    @exchange_rate = ExchangeRate.find(params[:id])
+    @exchange_rate = current_user.exchange_rates.find(params[:id])
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
