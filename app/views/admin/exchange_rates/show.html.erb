@@ -1,31 +1,42 @@
-<p id="notice"><%= notice %></p>
-
+<p id="notice">
+  <%= notice %>
+</p>
 <p>
   <strong>Amount:</strong>
   <%= @exchange_rate.amount %>
 </p>
-
 <p>
   <strong>Base currency:</strong>
   <%= @exchange_rate.base_currency %>
 </p>
-
 <p>
   <strong>Target currency:</strong>
   <%= @exchange_rate.target_currency %>
 </p>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <canvas id="chLine" data-set: <%=@exchange_rate.historical_duration%>></canvas>
-                </div>
-            </div>
-        </div>
-     </div>     
-</div>
+<table class="table" id="histogram">
+  <thead>
+    <tr>
+      <th>Year | Week #</th>
+      <th>Rate</th>
+      <th>Value</th>
+      <th>Profit/Loss</th>
+      <th>Highest / Lowest</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @exchange_rate.historical_duration.keys.each do |date, i| %>
+    <tr>
+      <td><%=Date.parse(date).strftime("%Y | %U")%></td>
+      <td><%= get_rate(date) %></td>
+      <td>
+        <%= convert_to(date) %></td>
+      <td><%= compute_profit(date) %>  </td>
+      <td> </td>
+    </tr>
+    <%end%>
+  </tbody>
+</table>
 
 <%= link_to 'Edit', edit_admin_exchange_rate_path(@exchange_rate) %> |
 <%= link_to 'Back', admin_exchange_rates_path %>
