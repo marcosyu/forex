@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Amount:</strong>
+  <%= @exchange_rate.amount %>
+</p>
+
+<p>
+  <strong>Base currency:</strong>
+  <%= @exchange_rate.base_currency %>
+</p>
+
+<p>
+  <strong>Target currency:</strong>
+  <%= @exchange_rate.target_currency %>
+</p>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="chLine" data-set: <%=@exchange_rate.historical_duration%>></canvas>
+                </div>
+            </div>
+        </div>
+     </div>     
+</div>
+
+<%= link_to 'Edit', edit_admin_exchange_rate_path(@exchange_rate) %> |
+<%= link_to 'Back', admin_exchange_rates_path %>

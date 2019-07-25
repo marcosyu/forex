@@ -3,6 +3,7 @@ class Admin::CalculationsController < AdminController
   before_action :set_calculation, except: [:index, :new, :create]
 
   def index
+
   end
 
   def new
@@ -10,6 +11,7 @@ class Admin::CalculationsController < AdminController
 
   def create
     @calculation = current_user.calculations.new(caculation_params)
+
     respond_to do |format|
       if @calculation.save
         format.html { redirect_to [current_user, @calculation], notice: 'Calculation was successfully created.' }
@@ -44,7 +46,7 @@ class Admin::CalculationsController < AdminController
   end
 
   def caculation_params
-    params.require(:calculation).permit!(:value, :to, :from, :user_id)
+    params.require(:calculation).permit!(:value, :to, :from)
   end
 
 end

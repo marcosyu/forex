@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :calculations
+    resources :exchange_rates
   end
 
   root :to => 'home#index'
