@@ -15,9 +15,6 @@ class ExchangeRateServices
       base: @@base_currency,
       symbols: @@symbols
     }
-    url = "http://data.fixer.io/api/timeseries"
-    params[:access_key] = "1f2722385bf2c7f87dba8b484911b141"
-    # response = Faraday.get("#{url}/timeseries", params)
 
     response = Faraday.get("#{ENV["CURRENCY_URL"]}/timeseries", params)
 
@@ -38,8 +35,8 @@ class ExchangeRateServices
       if File.exist?(file_url)
         return JSON.parse(File.read(file_url))
       else
-        # response = Faraday.get("#{ENV["CURRENCY_URL"]}/latest", { access_key: ENV["CURRENCY_API_KEY"] })
-        response = Faraday.get("http://data.fixer.io/api/latest", { access_key: "1f2722385bf2c7f87dba8b484911b141" })
+        response = Faraday.get("#{ENV["CURRENCY_URL"]}/latest", { access_key: ENV["CURRENCY_API_KEY"] })
+
         data = JSON.parse(response.body)
 
         ##catch the error
