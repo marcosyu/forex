@@ -4,7 +4,7 @@ class Admin::ExchangeRatesController < AdminController
   # GET /admin/exchange_rates
   # GET /admin/exchange_rates.json
   def index
-    @exchange_rates = ExchangeRate.all
+    @exchange_rates = current_user.exchange_rates
   end
 
   # GET /admin/exchange_rates/1
