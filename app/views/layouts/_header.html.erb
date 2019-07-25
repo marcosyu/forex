@@ -8,9 +8,11 @@
       <li class="nav-item active">
         <%= link_to 'Home', root_path, class: "nav-link" %>
       </li>
+      <%if current_user.present?%>
       <li class="nav-item active">
         <%= link_to 'Exchange Rates', admin_exchange_rates_path, class: "nav-link" %>
       </li>
+      <% end %>
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item active">
