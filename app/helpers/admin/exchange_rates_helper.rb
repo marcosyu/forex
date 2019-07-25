@@ -1,7 +1,20 @@
 module Admin::ExchangeRatesHelper
 
   def get_rate(date)
-    data[date][target_rate]
+    cur_value = data[date][target_rate]
+    max = data.values.max_by{|h,v| h.values }[target_rate]
+    low = data.values.min_by{|h,v| h.values }[target_rate]
+
+    byebug if cur_value == max
+    if max == cur_value
+      byebug
+      content_tag(:span, cur_value, class: 'text-success')
+    elsif low == cur_value
+      content_tag(:span, cur_value, class: 'text-danger')
+    else
+      cur_value
+    end
+
   end
 
   def convert_to(date)
@@ -13,11 +26,11 @@ module Admin::ExchangeRatesHelper
     return '--' if i == 0
     profit = convert_to(data.keys[i-1]) - convert_to(date)
     if profit > 0
-      content_tag(:span, profit.round(2), class: 'text-success text-center')
+      content_tag(:span, profit.round(2), class: 'text-success')
     elsif profit == 0
       content_tag(:span, profit.round(2), class: 'text-center')
     else
-      content_tag(:span, profit.round(2), class: 'text-danger text-center')
+      content_tag(:span, profit.round(2), class: 'text-danger')
     end
   end
 
