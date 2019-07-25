@@ -1,32 +1,30 @@
 <%= form_for [:admin, @exchange_rate ], local: true do |form| %>
-  <% if @exchange_rate.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(admin_exchange_rate.errors.count, "error") %> prohibited this admin_exchange_rate from being saved:</h2>
-
-      <ul>
-      <% admin_exchange_rate.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :amount %>
-    <%= form.text_field :amount %>
-  </div>
-
-  <div class="field">
-    <%= form.label :base_currency %>
-    <%= form.select :base_currency, ExchangeRateServices.get_currencies %>
-  </div>
-
-  <div class="field">
-    <%= form.label :target_currency %>
-    <%= form.select :target_currency, ExchangeRateServices.get_currencies %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+<% if @exchange_rate.errors.any? %>
+<div id="error_explanation">
+  <p>
+    <%= pluralize(@exchange_rate.errors.count, "error") %> prohibited this admin_exchange_rate from being saved:</p>
+  <ul>
+    <% @exchange_rate.errors.full_messages.each do |message| %>
+    <li>
+      <%= message %>
+    </li>
+    <% end %>
+  </ul>
+</div>
+<% end %>
+<div class="form-group">
+  <%= form.label :amount, class: "control-label" %>
+  <%= form.text_field :amount, class: "form-control" %>
+</div>
+<div class="form-group">
+  <%= form.label :base_currency , class: "control-label"%>
+  <%= form.select :base_currency, ExchangeRateServices.get_currencies, {}, {class: "form-control"} %>
+</div>
+<div class="form-group">
+  <%= form.label :target_currency, class: "control-label" %>
+  <%= form.select :target_currency, ExchangeRateServices.get_currencies,{}, {class: "form-control"} %>
+</div>
+<div class="form-group">
+  <%= form.submit %>
+</div>
 <% end %>

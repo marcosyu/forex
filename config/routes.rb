@@ -8,6 +8,8 @@ Rails.application.routes.draw do
     resources :exchange_rates
   end
 
+  mount Resque::Server.new, :at => "/resque"
+
   root :to => 'home#index'
 
 

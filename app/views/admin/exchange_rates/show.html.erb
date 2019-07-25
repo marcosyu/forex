@@ -1,42 +1,72 @@
 <p id="notice">
   <%= notice %>
 </p>
-<p>
-  <strong>Amount:</strong>
-  <%= @exchange_rate.amount %>
-</p>
-<p>
-  <strong>Base currency:</strong>
-  <%= @exchange_rate.base_currency %>
-</p>
-<p>
-  <strong>Target currency:</strong>
-  <%= @exchange_rate.target_currency %>
-</p>
-
-<table class="table" id="histogram">
-  <thead>
-    <tr>
-      <th>Year | Week #</th>
-      <th>Rate</th>
-      <th>Value</th>
-      <th>Profit/Loss</th>
-      <th>Highest / Lowest</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @exchange_rate.historical_duration.keys.each do |date, i| %>
-    <tr>
-      <td><%=Date.parse(date).strftime("%Y | %U")%></td>
-      <td><%= get_rate(date) %></td>
-      <td>
-        <%= convert_to(date) %></td>
-      <td><%= compute_profit(date) %>  </td>
-      <td> </td>
-    </tr>
+<div class="row">
+  <div class="col-5">
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2><strong>Details</strong></h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            <strong>Base amount:</strong>
+            <%= @exchange_rate.amount %>
+          </p>
+          <p>
+            <strong>Base currency:</strong>
+            <%= @exchange_rate.base_currency %>
+          </p>
+          <p>
+            <strong>Target currency:</strong>
+            <%= @exchange_rate.target_currency %>
+          </p>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <%= link_to 'Edit', edit_admin_exchange_rate_path(@exchange_rate) %> |
+        <%= link_to 'Back', admin_exchange_rates_path %>
+      </div>
+      <br />
+    </div>
+    <%if @exchange_rate.historical_duration.present? %>
+    <%= chart_data %>
     <%end%>
-  </tbody>
-</table>
-
-<%= link_to 'Edit', edit_admin_exchange_rate_path(@exchange_rate) %> |
-<%= link_to 'Back', admin_exchange_rates_path %>
+  </div>
+  <% if @exchange_rate.historical_duration.present? %>
+  <div class="col-7">
+    <table class="table table-dark" id="histogram">
+      <thead>
+        <tr>
+          <th>Year | Week #</th>
+          <th>Rate</th>
+          <th>Value</th>
+          <th>Profit/Loss</th>
+          <th>Highest / Lowest</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @exchange_rate.historical_duration.keys.reverse.each do |date, i| %>
+        <tr>
+          <td>
+            <%=Date.parse(date).strftime("%Y | %U")%>
+          </td>
+          <td>
+            <%= get_rate(date) %>
+          </td>
+          <td>
+            <%= convert_to(date) %>
+          </td>
+          <td>
+            <%= compute_profit(date) %>
+          </td>
+          <td>
+            <%= highest_lowest_value(date) %>
+          </td>
+        </tr>
+        <%end%>
+      </tbody>
+    </table>
+  </div>
+  <% end%>
+</div>

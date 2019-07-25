@@ -40,6 +40,7 @@ gem 'devise'
 gem 'jquery-rails'
 gem 'bootstrap', '~> 4.3.1'
 gem 'faraday'
+gem "chartkick"
 gem 'resque', require: 'resque/server'
 
 group :development, :test do
