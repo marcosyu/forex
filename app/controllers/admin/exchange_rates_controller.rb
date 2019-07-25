@@ -28,7 +28,7 @@ class Admin::ExchangeRatesController < AdminController
 
     respond_to do |format|
       if @exchange_rate.save
-        Resque.enqueue(ExchangeRateJob, @exchange_rate.id)
+        ExchangeRateJob.perform_later(@exchange_rate.id)
 
         format.html { redirect_to [:admin, @exchange_rate], notice: 'Exchange rate was successfully created.' }
         format.json { render :show, status: :created, location: @exchange_rate }
