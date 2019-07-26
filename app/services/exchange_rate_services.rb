@@ -1,59 +1,76 @@
 class ExchangeRateServices
 
   def initialize(id)
-    @@exchange_rate = ExchangeRate.find(id)
-    @@base_currency = @@exchange_rate.base_currency
-    @@symbols = @@exchange_rate.target_currency
+    @@favorite_exchange_rate = FavoriteExchangeRate.find(id)
   end
 
-  def get_histories
-    data = {}
-    (30.days.ago.to_date..Date.today).each do |date|
-      rate = fetch_data(date)
-      data[date.strftime('%Y-%m-%d')]= rate
+  def daily_update
+    base_currencies = FavoriteExchangeRate.pluck(:base_currency).uniq
+    base_currencies.each do |currency|
+      symbols = FavoriteExchangeRate.where(base_currency: currency).map(&:target_currency)
+
+      params = {
+        access_key: ENV["CURRENCY_API_KEY"],
+        base: @@favorite_exchange_rate.base_currency,
+        symbols: symbols.join(',')
+      }
+
+      # response = Faraday.get("#{ENV['CURRENCY_URL']}/latest", params)
+      # update_record(JSON.parse(response.body)["rates"])
+
+      ## for testing only
+      response = File.read(Rails.root+ "daily.json")
+      update_record(JSON.parse(response)["rates"], 'daily')
     end
-
-    @@exchange_rate.update_attribute('historical_duration', data )
   end
 
-  def fetch_data date
+  def populate_exchange_rate
     params = {
-      access_key: ENV["CURRENCY_API_KEY"],
-      base: @@base_currency,
-      symbols: @@symbols
+      start_date: 25.days.ago,
+      end_date: Date.today,
+      base: @@favorite_exchange_rate.base_currency,
+      symbols: @@favorite_exchange_rate.target_currency
     }
-    response = Faraday.get("#{ENV['CURRENCY_URL']}/#{date.strftime('%Y-%m-%d')}", params)
 
-    return JSON.parse(response.body)["rates"]
+    # response = Faraday.get("#{ENV['CURRENCY_URL']}/timeseries", params)
+    # update_record(JSON.parse(response.body)["rates"])
+
+    ## for testing only
+    response = File.read(Rails.root+ "php_usd.json")
+    update_record(JSON.parse(response)["rates"])
 
   end
 
-  class << self
 
-    def get_currencies
+  private
 
-      ## ideally this should be cached in local storage but heroku doesn't allow it.
-      ## not enough time to map to S3 or cloud storage.
+  def update_record data, daily=false
+    sql = daily ? by_symbol(data) : by_date(data)
+    ActiveRecord::Base.connection.execute(sql) if sql.present?
+  end
 
-      file_url = Rails.root.join('tmp/storage/currencies.json')
-
-      if File.exist?(file_url)
-        return JSON.parse(File.read(file_url))
-      else
-        response = Faraday.get("#{ENV["CURRENCY_URL"]}/latest", { access_key: ENV["CURRENCY_API_KEY"] })
-        data = JSON.parse(response.body)
-
-        ##catch the error
-        if data["success"]
-          currencies = JSON.parse(response.body)["rates"].keys
-          File.open(Rails.root.join('tmp/storage/currencies.json'),'w'){|f| f.write currencies.to_json }
-          return currencies
-        else
-          return data[:code]
-        end
-
+  def by_symbol data
+    sql = 'INSERT INTO exchange_rates (base_currency, target_currency, date, rate, created_at, updated_at) VALUES'
+    values = []
+    data.keys.each do |key|
+      exchange_rate = ExchangeRate.new({ rate: data[key], base_currency: @@favorite_exchange_rate.base_currency, target_currency: key, date:  Date.today })
+      if exchange_rate.valid?
+        values << "('#{ @@favorite_exchange_rate.base_currency}','#{key}', '#{Date.today}','#{data[key]}', '#{Time.now}', '#{Time.now}')"
       end
     end
+  end
 
+  def by_date data
+    sql = 'INSERT INTO exchange_rates (base_currency, target_currency, date, rate, created_at, updated_at) VALUES'
+    values = []
+    data.keys.each do |key|
+      rate = data[key][@@favorite_exchange_rate.target_currency]
+      exchange_rate = ExchangeRate.new({ rate: rate, base_currency: @@favorite_exchange_rate.base_currency, target_currency: @@favorite_exchange_rate.target_currency, date:  DateTime.parse(key) })
+      if exchange_rate.valid?
+        values << "('#{ @@favorite_exchange_rate.base_currency}', '#{@@favorite_exchange_rate.target_currency}',' #{DateTime.parse(key)}', #{rate}, '#{Time.now}', '#{Time.now}')"
+      end
+    end
+    return nil if values.empty?
+    sql += "#{values.join(',')};"
   end
 end

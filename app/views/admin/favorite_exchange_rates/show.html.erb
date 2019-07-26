@@ -8,14 +8,14 @@
         <div class="panel-heading">
           <h2> <strong>
               <%= @favorite_exchange_rate.base_currency %></strong>
-            <strong>To</strong>
+            <strong>-</strong>
             <strong>
               <%= @favorite_exchange_rate.target_currency %></strong></h2>
         </div>
         <div class="panel-body">
           <p>
             <strong>Amount:
-              <%= @favorite_exchange_rate.amount %>
+              <%= number_to_currency(@favorite_exchange_rate.amount, {unit:"#{ @favorite_exchange_rate.base_currency} "}) %>
           </p></strong>
         </div>
       </div>
@@ -41,25 +41,25 @@
         </tr>
       </thead>
       <tbody>
-        <% @favorite_exchange_rate.rates.each_with_index do |rate, i| %>
+        <% @favorite_exchange_rate.rates.each_with_index do |exchange_rate, i| %>
         <tr>
           <td class="text-center">
             <%= i+1%>
           </td>
           <td class="text-center">
-            <%= rate.date.strftime("%Y")%>
+            <%= exchange_rate.date.strftime("%Y")%>
           </td>
           <td class="text-center">
-            <%= rate.date.strftime("%U") %>
+            <%= exchange_rate.date.strftime("%U") %>
           </td>
           <td class="text-center">
-            <%= show_rate(rate) %>
+            <%= show_rate(exchange_rate) %>
           </td>
           <td class="text-center">
-            <%= convert_to(rate).to_f.round(2) %>
+            <%= convert_to(exchange_rate).to_f.round(2) %>
           </td>
           <td class="text-center">
-            <%= compute_profit(rate)%>
+            <%= compute_profit(exchange_rate)%>
           </td>
         </tr>
         <%end%>

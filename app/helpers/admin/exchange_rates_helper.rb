@@ -2,21 +2,22 @@ module Admin::ExchangeRatesHelper
   include ::AdminHelper
 
   def show_rate(exchange_rate)
+    actual_rate = exchange_rate.rate
+    max = rates.max_by{|h| h.rate }.rate
+    low = rates.min_by{|h| h.rate }.rate
 
-    max = rates.max_by{|h| h.rate }
-    low = rates.min_by{|h| h.rate }
-
-    if max == amount
-      content_tag(:span, amount.round(2), class: 'text-success')
-    elsif low == amount
-      content_tag(:span, amount.round(2), class: 'text-danger')
+    if max == actual_rate
+      content_tag(:span, actual_rate, class: 'text-success')
+    elsif low == actual_rate
+      content_tag(:span, actual_rate, class: 'text-danger')
     else
-      amount.round(2)
+      content_tag(:span, actual_rate )
     end
+
   end
 
   def convert_to(exchange_rate)
-    amount / exchange_rate.rate.to_f
+    amount * exchange_rate.rate
   end
 
   def compute_profit(exchange_rate)
@@ -47,7 +48,7 @@ module Admin::ExchangeRatesHelper
   private
 
   def amount
-    @favorite_exchange_rate.amount.to_f
+    @favorite_exchange_rate.amount
   end
 
   def rates
