@@ -1,0 +1,70 @@
+<p id="notice">
+  <%= notice %>
+</p>
+<div class="row">
+  <div class="col-5">
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2> <strong>
+              <%= @favorite_exchange_rate.base_currency %></strong>
+            <strong>To</strong>
+            <strong>
+              <%= @favorite_exchange_rate.target_currency %></strong></h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            <strong>Amount:
+              <%= @favorite_exchange_rate.amount %>
+          </p></strong>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <%= link_to 'Edit', edit_admin_favorite_exchange_rate_path(@favorite_exchange_rate) %> |
+        <%= link_to 'Back', admin_favorite_exchange_rates_path %>
+      </div>
+      <br />
+    </div>
+  </div>
+  <% if @favorite_exchange_rate.rates.present? %>
+  <%= chart_data %>
+  <div class="col-12">
+    <table class="table table-dark" id="histogram">
+      <thead>
+        <tr>
+          <th class="text-center">#</th>
+          <th class="text-center">Year</th>
+          <th class="text-center">Week #</th>
+          <th class="text-center">Rate</th>
+          <th class="text-center">Value</th>
+          <th class="text-center">Profit/Loss</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @favorite_exchange_rate.rates.each_with_index do |rate, i| %>
+        <tr>
+          <td class="text-center">
+            <%= i+1%>
+          </td>
+          <td class="text-center">
+            <%= rate.date.strftime("%Y")%>
+          </td>
+          <td class="text-center">
+            <%= rate.date.strftime("%U") %>
+          </td>
+          <td class="text-center">
+            <%= show_rate(rate) %>
+          </td>
+          <td class="text-center">
+            <%= convert_to(rate).to_f.round(2) %>
+          </td>
+          <td class="text-center">
+            <%= compute_profit(rate)%>
+          </td>
+        </tr>
+        <%end%>
+      </tbody>
+    </table>
+    <% end%>
+  </div>
+</div>

@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    resources :exchange_rates
+    resources :favorite_exchange_rates
   end
 
   mount Resque::Server.new, :at => "/resque"

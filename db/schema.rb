@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_25_070125) do
+ActiveRecord::Schema.define(version: 2019_07_26_160149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,14 +27,25 @@ ActiveRecord::Schema.define(version: 2019_07_25_070125) do
   end
 
   create_table "exchange_rates", force: :cascade do |t|
-    t.decimal "amount", precision: 8, scale: 2
     t.string "base_currency", limit: 3
     t.string "target_currency", limit: 3
-    t.text "historical_duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "rate", precision: 8, scale: 2
+    t.datetime "date"
+    t.index ["base_currency"], name: "index_exchange_rates_on_base_currency"
+    t.index ["date"], name: "index_exchange_rates_on_date"
+    t.index ["target_currency"], name: "index_exchange_rates_on_target_currency"
+  end
+
+  create_table "favorite_exchange_rates", force: :cascade do |t|
+    t.string "base_currency", limit: 3
+    t.string "target_currency", limit: 3
+    t.decimal "amount", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
-    t.index ["user_id"], name: "index_exchange_rates_on_user_id"
+    t.index ["user_id"], name: "index_favorite_exchange_rates_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -50,5 +61,5 @@ ActiveRecord::Schema.define(version: 2019_07_25_070125) do
   end
 
   add_foreign_key "calculations", "users"
-  add_foreign_key "exchange_rates", "users"
+  add_foreign_key "favorite_exchange_rates", "users"
 end

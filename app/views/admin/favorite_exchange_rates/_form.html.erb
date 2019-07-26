@@ -1,10 +1,10 @@
-<%= form_for [:admin, @exchange_rate ], local: true do |form| %>
-<% if @exchange_rate.errors.any? %>
+<%= form_for [:admin, @favorite_exchange_rate ], local: true do |form| %>
+<% if @favorite_exchange_rate.errors.any? %>
 <div id="error_explanation">
   <p>
-    <%= pluralize(@exchange_rate.errors.count, "error") %> prohibited this admin_exchange_rate from being saved:</p>
+    <%= pluralize(@favorite_exchange_rate.errors.count, "error") %> prohibited this admin_favorite_exchange_rate from being saved:</p>
   <ul>
-    <% @exchange_rate.errors.full_messages.each do |message| %>
+    <% @favorite_exchange_rate.errors.full_messages.each do |message| %>
     <li>
       <%= message %>
     </li>
@@ -18,11 +18,11 @@
 </div>
 <div class="form-group">
   <%= form.label :base_currency , class: "control-label"%>
-  <%= form.select :base_currency, ExchangeRateServices.get_currencies, {}, {class: "form-control"} %>
+  <%= form.select :base_currency, currencies, {}, {class: "form-control"} %>
 </div>
 <div class="form-group">
   <%= form.label :target_currency, class: "control-label" %>
-  <%= form.select :target_currency, ExchangeRateServices.get_currencies,{}, {class: "form-control"} %>
+  <%= form.select :target_currency, currencies, {}, {class: "form-control"} %>
 </div>
 <div class="form-group">
   <%= form.submit %>

@@ -1,28 +1,29 @@
 module Admin::ExchangeRatesHelper
+  include ::AdminHelper
 
-  def get_rate(date)
-    cur_value = data[date][target_rate]
-    max = data.values.max_by{|h,v| h.values }[target_rate]
-    low = data.values.min_by{|h,v| h.values }[target_rate]
+  def show_rate(exchange_rate)
 
-    if max == cur_value
-      content_tag(:span, cur_value, class: 'text-success')
-    elsif low == cur_value
-      content_tag(:span, cur_value, class: 'text-danger')
+    max = rates.max_by{|h| h.rate }
+    low = rates.min_by{|h| h.rate }
+
+    if max == amount
+      content_tag(:span, amount.round(2), class: 'text-success')
+    elsif low == amount
+      content_tag(:span, amount.round(2), class: 'text-danger')
     else
-      cur_value
+      amount.round(2)
     end
-
   end
 
-  def convert_to(date)
-    @exchange_rate.amount.to_f / data[date][target_rate]
+  def convert_to(exchange_rate)
+    amount / exchange_rate.rate.to_f
   end
 
-  def compute_profit(date)
-    i = data.keys.index(date)
+  def compute_profit(exchange_rate)
+    i = rates.index(exchange_rate)
     return '--' if i == 0
-    profit = convert_to(data.keys[i-1]) - convert_to(date)
+    profit = convert_to(rates[i-1]) - convert_to(exchange_rate)
+
     if profit > 0
       content_tag(:span, profit.round(2), class: 'text-success')
     elsif profit == 0
@@ -32,22 +33,11 @@ module Admin::ExchangeRatesHelper
     end
   end
 
-  def highest_lowest_value(date)
-    max = data.values.max_by{|h,v| h.values }[target_rate]
-    low = data.values.min_by{|h,v| h.values }[target_rate]
-
-    min_max = content_tag(:span, max, class: 'text-success')
-    min_max += " | "
-    min_max += content_tag(:span, low, class: 'text-danger')
-    return min_max
-  end
-
-
   def chart_data
 
     chart_data = []
-    @exchange_rate.historical_duration.each do |k|
-      chart_data << [ k[0], k[1].values[0] ]
+    rates.each do |exchange_rate|
+      chart_data << [ exchange_rate.date, exchange_rate.rate ]
     end
 
     return line_chart chart_data
@@ -56,8 +46,12 @@ module Admin::ExchangeRatesHelper
 
   private
 
-  def data
-    @exchange_rate.historical_duration
+  def amount
+    @favorite_exchange_rate.amount.to_f
+  end
+
+  def rates
+    @favorite_exchange_rate.rates
   end
 
   def target_rate

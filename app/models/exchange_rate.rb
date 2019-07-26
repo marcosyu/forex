@@ -1,11 +1,8 @@
 class ExchangeRate < ApplicationRecord
-  belongs_to :user
-  validates :amount, :base_currency, :target_currency, presence: true
-  serialize :historical_duration, Hash
 
-  after_save :pull_history
+  validates :base_currency, :target_currency, :date, presence: true
+  validates_uniqueness_of :date, scope: [:base_currency, :target_currency]
 
-  def pull_history
-    ExchangeRateJob.perform_later(self.id)
-  end
+  validates :rate, presence: true
+
 end

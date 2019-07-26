@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
 
   describe 'relations' do
-    it { should have_many(:exchange_rates) }
+    it { should have_many(:favorite_exchange_rates) }
   end
 
   describe 'validations' do
