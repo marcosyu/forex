@@ -28,6 +28,8 @@ class Admin::FavoriteExchangeRatesController < AdminController
 
     respond_to do |format|
       if @favorite_exchange_rate.save
+        PopulateExchangeRateJob.perform_later(@favorite_exchange_rate.id) if @favorite_exchange_rate.rates.empty?
+
         format.html { redirect_to [:admin, @favorite_exchange_rate], notice: 'Favorite Exchange rate was successfully created.' }
         format.json { render :show, status: :created, location: @favorite_exchange_rate }
       else

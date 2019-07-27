@@ -1,2 +1,2 @@
 web: bundle exec rails server -p $PORT
-worker: QUEUE=* bundle exec rake environment resque:work
+worker: QUEUE=* bundle exec env rake resque:schedule_then_work

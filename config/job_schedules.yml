@@ -1,0 +1,5 @@
+PullDailyExchangeRate:
+  cron: 0 0 * * *
+  class: DailyExchangeRatesJob
+  queue: daily_exchange_rate_job
+  description: "This job will daily and update values for all exchange rates"
