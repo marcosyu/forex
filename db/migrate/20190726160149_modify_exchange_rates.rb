@@ -6,9 +6,9 @@ class ModifyExchangeRates < ActiveRecord::Migration[5.2]
 
     add_column :exchange_rates, :date, :datetime
 
-    add_index :exchange_rates, :date
-    add_index :exchange_rates, :base_currency
-    add_index :exchange_rates, :target_currency
+
+    add_index :exchange_rates, [:date, :base_currency, :target_currency], unique: true, name: 'currency_pair_index'
+
     rename_column :exchange_rates, :amount, :rate
   end
 

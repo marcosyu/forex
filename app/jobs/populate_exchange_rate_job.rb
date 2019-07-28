@@ -1,8 +1,8 @@
 class PopulateExchangeRateJob < ApplicationJob
   @queue = :populate_exchange_rate_job
 
-  def perform(exchange_rate_id)
-    ExchangeRateServices.new.populate_exchange_rates
+  def perform(provider, id)
+    ExchangeRateServices.new({provider: provider, action:'histories', exchange_rate_id: id}).call
   end
 
 end

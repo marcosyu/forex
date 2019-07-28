@@ -1,7 +1,7 @@
 class DailyExchangeRatesJob < ApplicationJob
   @queue = :daily_exchange_rates_job
 
-  def perform
-    ExchangeRateServices.new.daily_update
+  def perform(provider)
+    ExchangeRateServices.new({provider: provider, action:'latest'}).call
   end
 end

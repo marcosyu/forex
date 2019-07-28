@@ -5,9 +5,6 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <%= link_to 'Home', root_path, class: "nav-link" %>
-      </li>
       <%if current_user.present?%>
       <li class="nav-item active">
         <%= link_to 'Favorite Exchange Rates', admin_favorite_exchange_rates_path, class: "nav-link" %>
