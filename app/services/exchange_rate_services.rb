@@ -13,7 +13,6 @@ class ExchangeRateServices
   end
 
   def call
-    byebug
     values = get_values_from_api
     if values.present?
       begin
