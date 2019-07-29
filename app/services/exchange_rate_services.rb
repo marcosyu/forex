@@ -13,10 +13,11 @@ class ExchangeRateServices
   end
 
   def call
+    byebug
     values = get_values_from_api
     if values.present?
       begin
-        sql = "INSERT INTO exchange_rates (base_currency, target_currency, date, rate, created_at, updated_at) VALUES #{values.join(', ')}"
+        sql = "INSERT INTO exchange_rates (base_currency, target_currency, date, rate, created_at, updated_at) VALUES #{values}"
         ActiveRecord::Base.connection.execute(sql)
       rescue ActiveRecord::RecordNotUnique
         Rails.logger.error 'Duplicate Record'
@@ -28,12 +29,10 @@ class ExchangeRateServices
   private
 
   def get_values_from_api
-    data = []
-    case @provider
+    case @attributes[:provider]
     when 'fixer_api'
-      data << ExchangeRateApis::FixerApiService.new(@attributes.except(:provider)).call
+      data = ExchangeRateApis::FixerApiService.new(@attributes.except(:provider)).call
     end
-    data.class == Array ? data.join(',') : data
   end
 
 
