@@ -13,7 +13,7 @@ class ExchangeRateApis::FixerApiService
     else
       mapped_data = data_to_value_series(data)
     end
-
+    return nil if mapped_data.blank?
     return mapped_data.class == Array ? mapped_data.join(',') : mapped_data
   end
 
@@ -26,6 +26,7 @@ class ExchangeRateApis::FixerApiService
       data = []
       params.each do |param|
         response = Faraday.get(url_for_action(@attributes[:action]), param)
+        break nil unless response["success"]
         data << JSON.parse(response.body)
       end
       Rails.logger.warn "call count #{data.count}"
@@ -57,14 +58,14 @@ class ExchangeRateApis::FixerApiService
       @attributes[:currency_pairs].keys.each do |key|
         params << {
           access_key: ENV['FIXER_API_KEY'],
-          base: key,
+          # base: key,
           symbols: @attributes[:currency_pairs][key].join(',')
         }
       end
     else
       params ={
         access_key: ENV['FIXER_API_KEY'],
-        base: @attributes[:base],
+        # base: @attributes[:base],
         symbols:  @attributes[:symbols]
       }
       params.merge!({start: @attributes[:start].strftime('%Y-%m-%d'), end: @attributes[:end].strftime('%Y-%m-%d')}) if @attributes[:action] == 'histories'
@@ -74,16 +75,17 @@ class ExchangeRateApis::FixerApiService
 
   def data_to_value_series data
     values = []
+
     if data['timeseries']
       data['rates'].keys.each do |day|
         values += data['rates'][day].map{|key,value| "('#{data['base']}', '#{key}',' #{Date.parse(day)}', '#{value}', '#{Date.today}', '#{Date.today}')" }
       end
     elsif data.class == Array ### workaround for basic account
       data.each do |datum|
-        values += datum['rates'].map{|key,value| "('#{data['base']}','#{key}', '#{Date.parse(data['date'])}', '#{value}', '#{Date.today}', '#{Date.today}')" }
+        values += datum['rates'].map{|key,value| "('#{data['base']}','#{key}', '#{Date.parse(data['date'])}', '#{value.round(6)}', '#{Date.today}', '#{Date.today}')" }
       end
     else
-      values += data['rates'].map{|key,value| "('#{data['base']}','#{key}', '#{Date.parse(data['date'])}', '#{value}', '#{Date.today}', '#{Date.today}')" }
+      values += data['rates'].map{|key,value| "('#{data['base']}','#{key}', '#{Date.parse(data['date'])}', '#{value.round(6)}', '#{Date.today}', '#{Date.today}')" }
     end
 
     return values
@@ -95,6 +97,7 @@ class ExchangeRateApis::FixerApiService
     (25.days.ago.to_date..Date.today).each do |date|
       @attributes[:start] = date
       response = Faraday.get(url_for_action('by_date'), params_for_action)
+      break nil unless response["success"]
       data << JSON.parse(response.body)
     end
     Rails.logger.warn "call count #{data.count}"
