@@ -18,7 +18,7 @@
 </div>
 <div class="form-group">
   <%= form.label :base_currency , class: "control-label"%>
-  <%= form.select :base_currency, currencies, {}, {class: "form-control"} %>
+  <%= form.select :base_currency, ENV['FIXER_API_SUBSCRIPTION'] == 'FREE' ? ["EUR"] : currencies, {}, {class: "form-control"} %>
 </div>
 <div class="form-group">
   <%= form.label :target_currency, class: "control-label" %>

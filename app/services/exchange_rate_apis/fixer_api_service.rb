@@ -21,18 +21,17 @@ class ExchangeRateApis::FixerApiService
 
   def fetch_from_fixer
     params = params_for_action
-
     if params.class == Array
       data = []
       params.each do |param|
         response = Faraday.get(url_for_action(@attributes[:action]), param)
-        break nil unless response["success"]
+        break nil unless JSON.parse(response.body)["success"] == true
         data << JSON.parse(response.body)
       end
       Rails.logger.warn "call count #{data.count}"
     else
       return get_histories if @attributes[:action] == "histories" ### workaround for basic account
-      response = Faraday.get(url_for_action, params)
+      response = Faraday.get(url_for_action(@attributes[:action]), params)
       data = JSON.parse(response.body)
     end
     return data
@@ -58,14 +57,14 @@ class ExchangeRateApis::FixerApiService
       @attributes[:currency_pairs].keys.each do |key|
         params << {
           access_key: ENV['FIXER_API_KEY'],
-          # base: key,
+          base: "#{ENV['FIXER_API_SUBSCRIPTION'] == 'FREE' ? 'EUR' : key}",
           symbols: @attributes[:currency_pairs][key].join(',')
         }
       end
     else
       params ={
         access_key: ENV['FIXER_API_KEY'],
-        # base: @attributes[:base],
+        base: "#{ENV['FIXER_API_SUBSCRIPTION'] == 'FREE' ? 'EUR' : @attributes[:base]}",
         symbols:  @attributes[:symbols]
       }
       params.merge!({start: @attributes[:start].strftime('%Y-%m-%d'), end: @attributes[:end].strftime('%Y-%m-%d')}) if @attributes[:action] == 'histories'
@@ -97,7 +96,7 @@ class ExchangeRateApis::FixerApiService
     (25.days.ago.to_date..Date.today).each do |date|
       @attributes[:start] = date
       response = Faraday.get(url_for_action('by_date'), params_for_action)
-      break nil unless response["success"]
+      break nil unless JSON.parse(response.body)["success"] == true
       data << JSON.parse(response.body)
     end
     Rails.logger.warn "call count #{data.count}"

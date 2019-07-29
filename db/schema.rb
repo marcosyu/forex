@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_28_172321) do
+ActiveRecord::Schema.define(version: 2019_07_29_054809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 2019_07_28_172321) do
     t.string "target_currency", limit: 3
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "rate", precision: 9, scale: 6
+    t.decimal "rate", precision: 10, scale: 6
     t.datetime "date"
     t.index ["date", "base_currency", "target_currency"], name: "currency_pair_index", unique: true
   end
