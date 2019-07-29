@@ -1,5 +1,7 @@
 PullDailyExchangeRate:
   cron: 0 0 * * *
   class: DailyExchangeRatesJob
+  args:
+    - provider: fixer_api 
   queue: daily_exchange_rate_job
   description: "This job will daily and update values for all exchange rates"
