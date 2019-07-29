@@ -9,8 +9,9 @@ class ExchangeRateApis::FixerApiService
     if data.class == Array
       mapped_data = data.map{|d| data_to_value_series d }
     else
-      mapped_data = data_to_value_series data
+      mapped_data = data_to_value_series(data)
     end
+
     return mapped_data.class == Array ? mapped_data.join(',') : mapped_data
   end
 
@@ -51,14 +52,14 @@ class ExchangeRateApis::FixerApiService
       @attributes[:currency_pairs].keys.each do |key|
         params << {
           access_key: ENV['FIXER_API_KEY'],
-          # base: key,
+          base: key,
           symbols: @attributes[:currency_pairs][key].join(',')
         }
       end
     else
       params ={
         access_key: ENV['FIXER_API_KEY'],
-        # base: @attributes[:base],
+        base: @attributes[:base],
         symbols: @attributes[:symbols].join(',')
       }
       params!.merge({start: @attributes[:start].strftime('%Y-%m-%d'), end: @attributes[:end].strftime('%Y-%m-%d')}) if @attributes[:action] == 'histories'
